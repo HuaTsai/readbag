@@ -25,7 +25,7 @@ void CreateDirectory(std::string dir_name) {
 int main(int argc, char **argv) {
   if (argc < 2) {
     RCLCPP_ERROR(rclcpp::get_logger("readbag"),
-                 "Usage: ros2 run readbag <bag_file>");
+                 "Usage: ros2 run readbag readbag <bag_file>");
     RCLCPP_ERROR(
         rclcpp::get_logger("readbag"),
         "Note that the output folders will be saved in the working directory.");
