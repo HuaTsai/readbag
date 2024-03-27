@@ -8,13 +8,14 @@
 #include <readbag/tqdm.h>
 #include <rosbag2_cpp/reader.hpp>
 #include <sensor_msgs/msg/compressed_image.hpp>
+#include <filesystem>
 
 void CreateDirectory(std::string dir_name) {
-  boost::filesystem::path dir(dir_name);
-  if (boost::filesystem::create_directory(dir)) {
+  std::filesystem::path dir(dir_name);
+  if (std::filesystem::create_directory(dir)) {
     std::cout << "Directory Created: " << dir_name << std::endl;
   } else {
-    if (boost::filesystem::exists(dir)) {
+    if (std::filesystem::exists(dir)) {
       std::cout << "Directory already exists: " << dir_name << std::endl;
     } else {
       std::cout << "Failed to create directory: " << dir_name << std::endl;
