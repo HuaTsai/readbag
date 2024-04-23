@@ -1,5 +1,6 @@
 #include <boost/filesystem.hpp>
 #include <cv_bridge/cv_bridge.h>
+#include <filesystem>
 #include <opencv2/opencv.hpp>
 #include <pcl/io/pcd_io.h>
 #include <pcl_conversions/pcl_conversions.h>
@@ -8,7 +9,6 @@
 #include <readbag/tqdm.h>
 #include <rosbag2_cpp/reader.hpp>
 #include <sensor_msgs/msg/compressed_image.hpp>
-#include <filesystem>
 
 void CreateDirectory(std::string dir_name) {
   std::filesystem::path dir(dir_name);
