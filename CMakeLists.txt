@@ -14,6 +14,9 @@ find_package(rosbag2_cpp REQUIRED)
 find_package(PCL REQUIRED)
 find_package(pcl_conversions REQUIRED)
 find_package(cv_bridge REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 
 include_directories(include)
 
@@ -21,8 +24,17 @@ add_executable(readbag src/readbag.cc)
 ament_target_dependencies(readbag rclcpp rosbag2_cpp PCL pcl_conversions cv_bridge)
 target_link_libraries(readbag ${PCL_LIBRARIES})
 
+add_executable(deepenai src/deepenai.cc)
+ament_target_dependencies(deepenai rclcpp rosbag2_cpp PCL pcl_conversions cv_bridge nav_msgs tf2 tf2_geometry_msgs)
+target_link_libraries(deepenai ${PCL_LIBRARIES})
+
+add_executable(vispath src/vispath.cc)
+ament_target_dependencies(vispath rclcpp rosbag2_cpp PCL pcl_conversions cv_bridge nav_msgs tf2 tf2_geometry_msgs)
+
 install(TARGETS
   readbag
+  deepenai
+  vispath
   DESTINATION lib/${PROJECT_NAME}
 )
 
