@@ -28,13 +28,8 @@ add_executable(deepenai src/deepenai.cc)
 ament_target_dependencies(deepenai rclcpp rosbag2_cpp PCL pcl_conversions cv_bridge nav_msgs tf2 tf2_geometry_msgs)
 target_link_libraries(deepenai ${PCL_LIBRARIES})
 
-add_executable(vispath src/vispath.cc)
-ament_target_dependencies(vispath rclcpp rosbag2_cpp PCL pcl_conversions cv_bridge nav_msgs tf2 tf2_geometry_msgs)
-
-install(TARGETS
-  readbag
-  deepenai
-  vispath
+install(
+  TARGETS readbag deepenai
   DESTINATION lib/${PROJECT_NAME}
 )
 

@@ -217,48 +217,39 @@ int main(int argc, char **argv) {
       }
       auto current_tf = MakeTransform(odom_msg);
       current_tf = init_tf.inverse() * current_tf;
-      Eigen::Quaterniond q(current_tf.linear().w(),
-                           current_tf.linear().x(),
-                           current_tf.linear().y(),
-                           current_tf.linear().z());
-      double yaw = current_tf.linear().eulerAngles(0, 1, 2)[2];
-      if (std::fabs(current_tf.linear().eulerAngles(0, 1, 2)[0]) > 1.57) {
-        yaw = -yaw;
-      }
-      // current_tf = curr
-
-      // odom_msg.pose.pose.position.x = current_tf.getOrigin().getX();
-      // odom_msg.pose.pose.position.y = current_tf.getOrigin().getY();
-      // odom_msg.pose.pose.position.z = current_tf.getOrigin().getZ();
-      // odom_msg.pose.pose.orientation.x = current_tf.getRotation().getX();
-      // odom_msg.pose.pose.orientation.y = current_tf.getRotation().getY();
-      // odom_msg.pose.pose.orientation.z = current_tf.getRotation().getZ();
-      // odom_msg.pose.pose.orientation.w = current_tf.getRotation().getW();
+      odom_msg.pose.pose.position.x = current_tf.translation().x();
+      odom_msg.pose.pose.position.y = current_tf.translation().y();
+      odom_msg.pose.pose.position.z = current_tf.translation().z();
+      Eigen::Quaterniond q(current_tf.linear());
+      odom_msg.pose.pose.orientation.x = q.x();
+      odom_msg.pose.pose.orientation.y = q.y();
+      odom_msg.pose.pose.orientation.z = q.z();
+      odom_msg.pose.pose.orientation.w = q.w();
       odoms.push_back(odom_msg);
     }
   }
   reader_odom.close();
   std::cerr << " Done" << std::endl;
 
-  // rosbag2_cpp::Reader reader;
-  // reader.open(argv[1]);
-  // rclcpp::Serialization<sensor_msgs::msg::PointCloud2> pc_ser;
-  // rclcpp::Serialization<sensor_msgs::msg::CompressedImage> img_ser;
-  // while (reader.has_next()) {
-  //   rosbag2_storage::SerializedBagMessageSharedPtr msg = reader.read_next();
-  //   if (msg->topic_name == "/aeva/AEVA/point_cloud_compensated") {
-  //     rclcpp::SerializedMessage serialized_msg(*msg->serialized_data);
-  //     sensor_msgs::msg::PointCloud2 cloud_msg;
-  //     pc_ser.deserialize_message(&serialized_msg, &cloud_msg);
-  //     cloud_msg.header.stamp = rclcpp::Time(msg.get()->time_stamp);
-  //     cloud = std::make_shared<sensor_msgs::msg::PointCloud2>(cloud_msg);
-  //   } else if (msg->topic_name == "/image_raw/compressed") {
-  //     rclcpp::SerializedMessage serialized_msg(*msg->serialized_data);
-  //     sensor_msgs::msg::CompressedImage img_msg;
-  //     img_ser.deserialize_message(&serialized_msg, &img_msg);
-  //     img_msg.header.stamp = rclcpp::Time(msg.get()->time_stamp);
-  //     Process(img_msg);
-  //   }
-  // }
-  // reader.close();
+  rosbag2_cpp::Reader reader;
+  reader.open(argv[1]);
+  rclcpp::Serialization<sensor_msgs::msg::PointCloud2> pc_ser;
+  rclcpp::Serialization<sensor_msgs::msg::CompressedImage> img_ser;
+  while (reader.has_next()) {
+    rosbag2_storage::SerializedBagMessageSharedPtr msg = reader.read_next();
+    if (msg->topic_name == "/aeva/AEVA/point_cloud_compensated") {
+      rclcpp::SerializedMessage serialized_msg(*msg->serialized_data);
+      sensor_msgs::msg::PointCloud2 cloud_msg;
+      pc_ser.deserialize_message(&serialized_msg, &cloud_msg);
+      cloud_msg.header.stamp = rclcpp::Time(msg.get()->time_stamp);
+      cloud = std::make_shared<sensor_msgs::msg::PointCloud2>(cloud_msg);
+    } else if (msg->topic_name == "/image_raw/compressed") {
+      rclcpp::SerializedMessage serialized_msg(*msg->serialized_data);
+      sensor_msgs::msg::CompressedImage img_msg;
+      img_ser.deserialize_message(&serialized_msg, &img_msg);
+      img_msg.header.stamp = rclcpp::Time(msg.get()->time_stamp);
+      Process(img_msg);
+    }
+  }
+  reader.close();
 }
